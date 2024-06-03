@@ -11,33 +11,33 @@ import (
 func main() {
 	godotenv.Load()
 
-	engine := strings.ToUpper(getEnv("ENGINE"))
+	engine := strings.ToUpper(os.Getenv("PW_ROTATE_ENGINE"))
 	if engine == "" {
-		log.Fatal("ENGINE cannot be empty")
+		log.Fatal("PW_ROTATE_ENGINE cannot be empty")
 	}
 
-	seedPassword := getEnv(engine + "_SEED_PASSWORD")
+	seedPassword := getEnv("SEED_PASSWORD", engine)
 	if seedPassword == "" {
 		log.Println(engine + "_SEED_PASSWORD is empty, skipping password rotation")
 		return
 	}
 
-	user := getEnv(engine + "_USER")
+	user := getEnv("USER", engine)
 	if user == "" {
 		log.Fatal(engine + "_USER cannot be empty")
 	}
 
-	password := getEnv(engine + "_PASSWORD")
+	password := getEnv("PASSWORD", engine)
 	if password == "" {
 		log.Fatal(engine + "_PASSWORD cannot be empty")
 	}
 
-	host := getEnv(engine + "_HOST")
+	host := getEnvWithDefault("HOST", engine)
 	if host == "" {
 		log.Fatal(engine + "_HOST cannot be empty")
 	}
 
-	port, err := strconv.Atoi(getEnv(engine + "_PORT"))
+	port, err := strconv.Atoi(getEnvWithDefault("PORT", engine))
 	if err != nil {
 		log.Fatalf("invalid port %d", port)
 		return
@@ -64,10 +64,19 @@ func main() {
 		}
 		log.Fatalf("failed to rotate password: %s", err)
 	}
+	log.Printf("%s password successfully rotated for user %s\n", engine, user)
 }
 
-func getEnv(name string) string {
-	key := os.Getenv(name + "_KEY")
+func getEnv(name string, engine string) string {
+	key := os.Getenv(engine + "_" + name + "_KEY")
 	return os.Getenv(key)
+}
+
+func getEnvWithDefault(name string, engine string) string {
+	value := getEnv(name, engine)
+	if value == "" {
+		value = os.Getenv("DEFAULT_" + engine + "_" + name)	
+	}
+	return value
 }
 

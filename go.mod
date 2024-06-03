@@ -1,4 +1,4 @@
-module github.com/emillamm/pw-update
+module github.com/emillamm/pw-rotate
 
 go 1.22.3
 
