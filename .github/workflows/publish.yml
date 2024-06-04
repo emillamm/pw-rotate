@@ -44,7 +44,7 @@ jobs:
         with:
           token: ${{ github.token }}
           branch: main
-          patchAll: true
+          noVersionBumpBehavior: patch
 
       - name: Setup Go
         uses: actions/setup-go@v5
