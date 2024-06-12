@@ -1,3 +1,3 @@
-# pw-rotate
-Automate rotation of database passwords.
+# pwrotate
+Password rotation: Automate rotation of database passwords.
 

@@ -1,4 +1,4 @@
-package main
+package pwrotate
 
 import (
 	"testing"
@@ -6,21 +6,20 @@ import (
 	"math/rand"
 	"database/sql"
 	_ "github.com/lib/pq"
-	"github.com/joho/godotenv"
-	"os"
 	"strconv"
+	"github.com/emillamm/pwrotate/env"
 )
 
 func TestPostgresRotator(t *testing.T) {
 
-	godotenv.Load("testdata/testconf.env")
-
-	user := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	host := os.Getenv("POSTGRES_HOST")
-	port, err := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
+	engine := "POSTGRES"
+	user := env.GetenvWithDefault("USER", "postgres", engine)
+	password := env.GetenvWithDefault("PASSWORD", "postgres", engine)
+	host := env.GetenvWithDefault("HOST", "localhost", engine)
+	portStr := env.GetenvWithDefault("PORT", "5432", engine)
+	port, err := strconv.Atoi(portStr)
 	if err != nil {
-		t.Errorf("invalid port %d", port)
+		t.Errorf("invalid PORT %s", portStr)
 		return
 	}
 

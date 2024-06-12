@@ -1,4 +1,4 @@
-package main
+package pwrotate
 
 import (
 	"testing"
