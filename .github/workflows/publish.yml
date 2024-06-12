@@ -55,7 +55,7 @@ jobs:
         run: go get .
 
       - name: Run tests
-        run: go test
+        run: go test ./...
 
       - name: Log in to the container registry
         uses: docker/login-action@v3
@@ -68,9 +68,10 @@ jobs:
         name: Tag docker image and push to container registry
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.nextStrict }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get-version.outputs.nextStrict }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Create github tag
         uses: actions/github-script@v6
@@ -79,7 +80,7 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/${{ steps.get-version.outputs.nextStrict }}",
+              ref: "refs/tags/${{ steps.get-version.outputs.next }}",
               sha: context.sha
             })
 
