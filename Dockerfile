@@ -1,8 +1,12 @@
-FROM golang:1.22
+FROM golang:1.22 as builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
-COPY *.go *.env ./
-RUN CGO_ENABLED=0 GOOS=linux go build -o /pw-rotate
-CMD ["/pw-rotate"]
+COPY . .
+RUN ls -R
+RUN CGO_ENABLED=0 GOOS=linux go build -o pwrotate ./cmd/pwrotate
+
+FROM gcr.io/distroless/base-debian12
+COPY --from=builder /app/pwrotate /
+CMD ["/pwrotate"]
 
