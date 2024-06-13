@@ -15,7 +15,7 @@ func Getenv(name string, engine string) string {
 }
 
 func GetenvOrFatal(name string, engine string) string {
-	v := Getenv(name, name)
+	v := Getenv(name, engine)
 	if v == "" {
 		log.Fatalf("%s_%s cannot be empty", engine, name)
 	}
