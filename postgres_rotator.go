@@ -3,6 +3,7 @@ package pwrotate
 import (
 	"fmt"
 	"database/sql"
+	_ "github.com/lib/pq"
 )
 
 type PostgresRotator struct {
