@@ -23,6 +23,12 @@ func RotatorTest(t *testing.T, r Rotator, user string, oldPw string, newPw strin
 		}
 	})
 
+	t.Run("rotate return ErrAlreadyRotated", func(t *testing.T) {
+		if err := r.Rotate(user, oldPw, newPw); err != ErrAlreadyRotated {
+			t.Errorf("rotate did not return ErrAlreadyRotated: %s", err)
+		}
+	})
+
 	t.Run("authentication using oldPw should fail and newPw should succeed", func(t *testing.T) {
 		if err := r.Ping(user, oldPw); err == nil {
 			t.Errorf("authentication with oldPw %s was successful: %#v", oldPw, err)

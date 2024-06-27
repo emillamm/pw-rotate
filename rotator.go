@@ -7,5 +7,5 @@ type Rotator interface {
 	Ping(user string, pw string) error
 }
 
-var ErrNotAuthenticated = errors.New("failed to authenticate with provided credentials")
+var ErrAlreadyRotated = errors.New("password already rotated")
 

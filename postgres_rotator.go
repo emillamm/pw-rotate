@@ -3,7 +3,6 @@ package pwrotate
 import (
 	"fmt"
 	"database/sql"
-	"github.com/lib/pq"
 )
 
 type PostgresRotator struct {
@@ -12,6 +11,11 @@ type PostgresRotator struct {
 }
 
 func (r PostgresRotator) Rotate(user string, oldPw string, newPw string) error {
+	// Check if password was already rotated
+	if err := r.Ping(user, newPw); err == nil {
+		return ErrAlreadyRotated
+	}
+	// Rotate old to new password
 	db, err := r.newConnection(user, oldPw)
 	if err != nil {
 		return err
@@ -29,19 +33,12 @@ func (r PostgresRotator) Ping(user string, pw string) error {
 	return err
 }
 
-func checkAuth(db *sql.DB) error {
-	err := db.Ping()
-	if e, ok := err.(*pq.Error); ok && e.Routine == "auth_failed" {
-		return ErrNotAuthenticated
-	}
-	return err
-}
-
+// Creating a new connection will ping to see if auth is valid
 func (r PostgresRotator) newConnection(user string, pw string) (db *sql.DB, err error) {
 	connStr := fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable", user, pw, r.Host, r.Port)
 	db, err = sql.Open("postgres", connStr)
 	if db != nil {
-		if err = checkAuth(db); err != nil {
+		if err = db.Ping(); err != nil {
 			db = nil
 		}
 	}

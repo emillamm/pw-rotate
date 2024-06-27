@@ -44,8 +44,8 @@ func Run() {
 	}
 
 	if err = rotator.Rotate(user, seedPassword, password); err != nil {
-		if err == ErrNotAuthenticated {
-			log.Println("Skipping password rotation due to authentication failure. This is expected if password was already rotated.")
+		if err == ErrAlreadyRotated {
+			log.Printf("Skipping password rotation: %s\n", err)
 			return
 		}
 		log.Fatalf("failed to rotate password: %s", err)
